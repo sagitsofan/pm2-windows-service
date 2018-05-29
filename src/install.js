@@ -17,18 +17,9 @@ const path = require('path'),
 module.exports = co.wrap(function*(name, no_setup) {
     common.check_platform();
 
-    yield common.admin_warning();
+    yield common.admin_warning();    
 
-    let setup_response = yield no_setup ? Promise.resolve({
-        perform_setup: false
-    }) : inquirer.prompt([{
-        type: 'confirm',
-        name: 'perform_setup',
-        message: 'Perform environment setup (recommended)?',
-        default: true
-    }]);
-
-    if(setup_response.perform_setup) {
+    if(true) {
         yield setup();
     }
 
@@ -36,6 +27,12 @@ module.exports = co.wrap(function*(name, no_setup) {
         name: name || 'PM2',
         script: path.join(__dirname, 'service.js')
     });
+	
+	//add service user account
+	service.logOnAs.domain = '%Domain%';
+	service.logOnAs.account = '%AppAdminUser%';
+	service.logOnAs.password = '%AppAdminPassword%';
+	
 
     // Let this throw if we can't remove previous daemon
     try {
@@ -43,7 +40,8 @@ module.exports = co.wrap(function*(name, no_setup) {
     } catch(ex) {
         throw new Error('Previous daemon still in use, please stop or uninstall existing service before reinstalling.');
     }
-
+	
+	
     // NOTE: We don't do (name = name || 'PM2') above so we don't end up
     // writing out a sid_file for default name
     yield* save_sid_file(name);
