@@ -25,7 +25,8 @@ module.exports = co.wrap(function*(name, no_setup) {
 
     let service = new Service({
         name: name || 'PM2',
-        script: path.join(__dirname, 'service.js')
+        script: path.join(__dirname, 'service.js'),
+		stopparentfirst: true
     });
 	
 	//add service user account
